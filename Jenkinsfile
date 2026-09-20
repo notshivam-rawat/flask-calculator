@@ -3,7 +3,6 @@ pipeline {
     agent any
 
     triggers {
-        // Check GitHub for changes automatically
         pollSCM('H/2 * * * *')
     }
 
@@ -48,6 +47,8 @@ pipeline {
         stage('Start Flask Application') {
             steps {
                 sh '''
+                    export JENKINS_NODE_COOKIE=dontKillMe
+
                     nohup venv/bin/python app.py > flask.log 2>&1 &
                     echo $! > flask.pid
 
@@ -73,7 +74,7 @@ pipeline {
 
         success {
             echo 'Flask CI Pipeline completed successfully!'
-            echo 'Application is running on port 5000.'
+            echo 'Flask application is running on port 5000.'
         }
 
         failure {
